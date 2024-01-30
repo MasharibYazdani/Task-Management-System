@@ -9,7 +9,6 @@ import { useEffect } from "react";
 import Header from "./components/Header";
 import { Provider } from "react-redux";
 import userStore from "./utils/userStore";
-import Collab from "./components/Collab/Collab";
 import ForgotPassword from "./components/ForgotPassword";
 import Error from "./components/Error";
 
