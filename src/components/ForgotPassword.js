@@ -19,23 +19,32 @@ function ForgotPassword() {
   };
 
   return (
-    <div className="m-5 d-flex justify-content-center">
-      <div className=" h">
-        <label className="fw-bold">Email:</label>
+    <div
+      className="p-5"
+      style={{ backgroundColor: "#f7ebf6", minHeight: "100vh" }}
+    >
+      <div
+        className="container mt-5 shadow-lg rounded "
+        style={{ backgroundColor: "#fcf5fc" }}
+      >
+        <div className="row justify-content-center">
+          <div className="col-md-6">
+            <label className="fw-bold mb-2">Email:</label>
 
-        <input
-          className="rounded m-2"
-          style={{ height: "40px", width: "400px" }}
-          type="email"
-          value={email}
-          placeholder="Email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </div>
-      <div className="m-2">
-        <button className="btn btn-primary" onClick={handleForgotPassword}>
-          Reset Password
-        </button>
+            <input
+              className="form-control mb-2"
+              type="email"
+              value={email}
+              placeholder="Email"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div className="m-2">
+            <button className="btn btn-primary" onClick={handleForgotPassword}>
+              Reset Password
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import AddNewTask from "./AddNewTask";
 import { child, get, ref, remove } from "firebase/database";
 import { db } from "../firebase";
 import Edit from "./Edit";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function Body() {
   const [addTask, setAddTask] = useState(false);
@@ -15,6 +15,8 @@ function Body() {
   const [filteredStatus, setFilteredStatus] = useState("all");
 
   const { id } = useParams();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     getTaskList();
@@ -81,95 +83,133 @@ function Body() {
     return "secondary";
   };
 
+  const handlCollab = () => {
+    // navigate(`/task/${id}/collab`);
+  };
+
   return (
-    <div className="container text-center mt-5">
-      <div className="row">
-        <div className="col-md-4 text-start">
-          <div>
-            <button className="btn btn-primary" onClick={handleAddTask}>
-              {" "}
-              Add New Task +{" "}
-            </button>
+    <div style={{ backgroundColor: "#f7ebf6", minHeight: "100vh" }}>
+      <div className="container text-center p-5">
+        <div className="row">
+          <div className="col-md-4 text-start">
+            {addTask ? (
+              <div>
+                <button className="btn btn-primary" onClick={handleAddTask}>
+                  X
+                </button>
+              </div>
+            ) : (
+              <div>
+                <button className="btn btn-primary" onClick={handleAddTask}>
+                  {" "}
+                  Add New Task +{" "}
+                </button>
+              </div>
+            )}
           </div>
+
+          <div className="col-md-4 text-center d-flex justify-content-between">
+            <div
+              className=" border rounded p-2 align-self-center bg-primary"
+              style={{ height: "40px" }}
+            >
+              <label htmlFor="inputState" className="form-label text-white">
+                Filter By Status
+              </label>
+            </div>
+            <div className="fw-bold fs-5">:</div>
+            <div>
+              <select
+                type="select"
+                id="inputState"
+                className="form-select"
+                name="status"
+                onChange={(e) => setFilteredStatus(e.target.value)}
+              >
+                <option value="all">All</option>
+                <option value="todo">To Do</option>
+                <option value="active">Active</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="col-md-4 text-end">
+            <div>
+              <button className="btn btn-primary" onClick={handlCollab}>
+                {" "}
+                Collab +{" "}
+              </button>
+            </div>
+          </div>
+          {addTask && (
+            <AddNewTask id={id} addTask={addTask} setAddTask={setAddTask} />
+          )}
         </div>
 
-        <div className="col-md-4 text-start d-flex justify-content-around ">
-          <div className=" border rounded p-2 align-self-center bg-primary">
-            <label htmlFor="inputState" className="form-label text-white">
-              Filter By Status :
-            </label>
+        {dataList.length === 0 ? (
+          <div className="fw-bold mt-3">
+            No task assigned! Please add your task{" "}
           </div>
-          <div>
-            <select
-              type="select"
-              id="inputState"
-              className="form-select"
-              name="status"
-              onChange={(e) => setFilteredStatus(e.target.value)}
-            >
-              <option value="all">All</option>
-              <option value="todo">To Do</option>
-              <option value="active">Active</option>
-              <option value="completed">Completed</option>
-            </select>
-          </div>
-        </div>
-        {addTask && (
-          <AddNewTask id={id} addTask={addTask} setAddTask={setAddTask} />
+        ) : (
+          Object.keys(dataList).map((taskId, index) => {
+            const task = dataList[taskId];
+            return (
+              <div key={taskId}>
+                <div className="row mt-3  shadow-lg p-3 rounded">
+                  <div className="col-sm fw-bold">{task.title} </div>
+                  <div
+                    className={`col-sm text-bg-${handleStatus(
+                      task.status
+                    )} rounded p-1 text-center text-white`}
+                  >
+                    {task.status
+                      ? task.status.charAt(0).toUpperCase() +
+                        task.status.substring(1)
+                      : ""}
+                  </div>
+                  <div className="col-sm text-center">{task.deadline}</div>
+
+                  {taskEditClick === index ? (
+                    <div className="col-sm text-center">
+                      <button
+                        className="btn btn-success"
+                        onClick={() => handleEditClick(index)}
+                      >
+                        X
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="col-sm text-center">
+                      <button
+                        className="btn btn-success"
+                        onClick={() => handleEditClick(index)}
+                      >
+                        View & Edit Task
+                      </button>
+                    </div>
+                  )}
+                  <div className="col-sm text-center">
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => handleDelete(taskId)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  {taskEditClick === index && (
+                    <Edit
+                      id={id}
+                      taskId={taskId} // pass the task data to the EditTasks component
+                      setClick={() => setTaskEditClick(null)}
+                    />
+                  )}
+                </div>
+              </div>
+            );
+          })
         )}
       </div>
-
-      {dataList.length === 0 ? (
-        <div className="fw-bold mt-3">
-          No task assigned! Please add your task{" "}
-        </div>
-      ) : (
-        Object.keys(dataList).map((taskId, index) => {
-          const task = dataList[taskId];
-          return (
-            <div key={taskId}>
-              <div className="row mt-3  shadow-lg p-3 rounded">
-                <div className="col-sm fw-bold">{task.title} </div>
-                <div
-                  className={`col-sm text-bg-${handleStatus(
-                    task.status
-                  )} rounded p-1 text-center text-white`}
-                >
-                  {task.status
-                    ? task.status.charAt(0).toUpperCase() +
-                      task.status.substring(1)
-                    : ""}
-                </div>
-                <div className="col-sm text-center">{task.deadline}</div>
-
-                <div className="col-sm text-center">
-                  <button
-                    className="btn btn-success"
-                    onClick={() => handleEditClick(index)}
-                  >
-                    View & Edit Task
-                  </button>
-                </div>
-                <div className="col-sm text-center">
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => handleDelete(taskId)}
-                  >
-                    Delete
-                  </button>
-                </div>
-                {taskEditClick === index && (
-                  <Edit
-                    id={id}
-                    taskId={taskId} // pass the task data to the EditTasks component
-                    setClick={() => setTaskEditClick(null)}
-                  />
-                )}
-              </div>
-            </div>
-          );
-        })
-      )}
     </div>
   );
 }

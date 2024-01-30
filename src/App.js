@@ -9,8 +9,9 @@ import { useEffect } from "react";
 import Header from "./components/Header";
 import { Provider } from "react-redux";
 import userStore from "./utils/userStore";
-
+import Collab from "./components/Collab/Collab";
 import ForgotPassword from "./components/ForgotPassword";
+import Error from "./components/Error";
 
 function App() {
   // const user = useSelector(selectUser);
@@ -57,6 +58,7 @@ export const router = createBrowserRouter([
         element: <ForgotPassword />,
       },
     ],
+    errorElement: <Error />,
   },
 ]);
 export default App;

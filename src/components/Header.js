@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUser, selectUser } from "../utils/userSlice";
 import { signOut } from "firebase/auth";
@@ -58,7 +58,13 @@ function Header() {
       data-bs-theme="dark"
     >
       <div className="container-fluid d-flex justify-content-around">
-        <div className="text-white fs-3">Task Management System</div>
+        {user ? (
+          <Link to={"/task/" + user} style={{ textDecoration: "none" }}>
+            <div className="text-white fs-3">Task Management System</div>
+          </Link>
+        ) : (
+          <div className="text-white fs-3">Task Management System</div>
+        )}
 
         {user && userData ? (
           <div className="d-flex">
